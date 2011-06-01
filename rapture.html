@@ -1,0 +1,33 @@
+<!--$cookie-->
+<!--find location-->
+	<!--user enters zip-->
+	<!--browser detect -->
+		<!--wifi-->
+		<!--ip loc-->
+
+<!--populate map with nearby churches-->
+	<!--find 'churches' near:$zip-->
+	<!--collect as/convert to csv coords-->
+	<!--check list against existing location db-->
+		<!--mysql_query ("SELECT * FROM Rapture WHERE XLoc='$x' && YLoc = '$y'")   //filter by zip first--> 
+			<!--for each location NOT in db -->
+			<!--display cross.png as placemarker at each coordinate set-->
+	
+			<!--add locations from db -->
+				<!--display matching icon '$type.png' and plot with details from db -->
+		<!--user can click any marker for bubble-->	
+			<!--menu-->
+			<!--textbox[$name]: name of new establishment-->
+				<!--dropdown[$type]: type -->
+					<!--brothel-->
+					<!--planned parenthood-->
+					<!--opium den-->
+
+		<!-- for each modified location -->
+			<!--mysql_query ("INSERT INTO Rapture (NewName, LKind, XLoc, YLoc, Zip, Creator) VALUES ('$name', '$type', '$x', '$y', '$zip', '$cookie') ");-->
+		
+		<!-- -->
+
+<!-- -->
+
+<!-- -->
