@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rapture Dibs</title>
+<link href="styles.css" media="screen" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js" ></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<body>
+	
+	<div id="header">
+	<h1>Rapture Dibs</h1>
+	</div>
+
+	<div id="mapsnstuff">
+		<br /><br /><br />
+		<div id="map-container"></div>
+		&nbsp;<input placeholder="zip code" type="textbox" id="zipText" />
+		<button type="submit" onClick="initialize()">Go</button>
+		<div id="newForm-container"></div>
+	</div>
+	<div id="content">
+	<p>We heard the world's <a href="http://judgementday2011.com/">going to end soon</a>. Multiple times. Some planning is in order.</p>
+
+	<p>If everything we <a href="http://www.youtube.com/watch?v=ZdqOmBEIqQA&feature=related">hear</a> is correct, a whole bunch of people are going to up and disappear. They will individually and organizationally leave property behind. Some of it will be willed to specific individuals, but much of it essentially up for grabs. Since we don't support looting or violence (and want to give a good name to nonbelievers and sinners everywhere) we're proposing an alternative. Every school child knows the simplest possible solution to this troubling situation: the centuries old tradition of <a href="http://en.wikipedia.org/wiki/Dibs">'dibs'</a>.</p>
+	<p> So here's the deal-- Claim anything here. Leave your name and the name and location of the item/property you want to claim after its owner(s) get transported to the starship in the sky. We'll save your claim along with the date so you can settle any disputes </p>
+	
+	<p></p>
+
+	<p id="creators"><a href="http://twitter.com/danielsiders">Daniel Siders</a><br><a href="http://twitter.com/vincentmasiello">Vincent Masiello</a></p>
+
+	</div>
+
+	<div id="footer">
+
+	<p>Privacy policy: Everything on this site is public.</p>
+	
+	<p>Terms of Service: This was made for fun. No guarantees are made as to the site's functionality or availability. Use at your own risk.</p>
+	
+	<p>Special thanks to <a href="http://facelette.com/">Facelette</a>/<a href="http://twitter.com/#!/holman">@holman</a> from whom we stole the styling of this page without permission.</p>
+
+	</div>
+	
+	<script>
+	
+		var rGo = 'Thundercats are Go!';
+		var meta = 'f';
+		
+		$(function() {
+			initialize();
+		});
+
+		function initialize() {
+			//TODO: validate zip code
+			var zip = $('#zipText').val();
+			
+			meta = (zip=='cat') ? 't' : 'f';
+				
+			var center = (zip=="" || zip=="cat") ? '11211' : zip;
+			geocode(center);
+		}
+
+		function geocode(zip) {
+			var geocoder = new google.maps.Geocoder();
+			geocoder.geocode({ 'address': zip }, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					parseLocation(results[0].geometry.location);
+				} else
+					alert('The Zip Code you entered is invalid');
+
+			});
+		}
+
+		function parseLocation(location, lon) {
+			var i, lat, lng;
+			if (!lon) {
+				lat = location.lat();
+				lng = location.lng();
+			}	else {
+				lat = location;
+				lng = lon;
+			}
+			//shorten lat/lng to 6 dec places
+			i = lat.toString().indexOf('.')+6;
+			lat = lat.toString().substr(0, i);
+			i = lng.toString().indexOf('.')+6;
+			lng = lng.toString().substr(0, i);
+
+			//var center = new google.maps.LatLng(lat, lng);
+
+			//send lat/lng to iframe
+			var mapFrame = document.createElement('iframe');
+			mapFrame.src = 'http://'+document.domain+'/map.php?lat='+lat+'&lng='+lng+'&cat='+meta;
+			mapFrame.width = 800;
+			mapFrame.height = 500;
+			mapFrame.style.border = "none";
+			
+			$('#map-container').html(mapFrame);
+		}
+		
+		function sendNew(form, lat, lng) {
+			var url = 'http://'+document.domain+'/update.php';
+			if (form.cname.value == '' || form.lname.value == '') {
+				alert('If you want to call "Dibs", tell us your name and what you want to claim.');
+				return;
+			}
+			var data = {
+				lat: lat,
+				lng: lng,
+				cname: form.cname.value,
+				lname: form.lname.value,
+				address: form.address.value,
+				notes: form.notes.value
+			}
+			$.post(url, data, function(response) {
+				if (response!=rGo)
+					$('#map-container').html(response);
+			});
+			//var loc = new google.maps.LatLng(lat, lng);
+			//alert(loc);
+			var loadingHTML = '<div class="loading-container" style="padding: 50px 100px 50px 100px; width:500px; \
+								height: 500px;"><img src="loadingAnimation.gif" />';
+			//$('#map-container').html(loadingHTML);
+			$('#newForm-container').html('');
+			setTimeout("parseLocation("+lat+", "+lng+")", 500);
+		}
+		
+	</script>
+	
+</body>
+</html>
